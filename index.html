@@ -313,12 +313,55 @@ footer {
     <button onclick="showSection('apply')">Apply</button>
     <button onclick="showSection('interview')">HR Interview</button>
     <button onclick="showSection('dashboard')">Dashboard</button>
-</nav>
+<button onclick="showSection('auth')">Login / Sign Up</button>
+<button id="logoutButton" onclick="logoutUser()" style="display:none;">
+    Logout
+</button></nav>
 
 <div class="container">
 
 <!-- HOME -->
+<section id="auth" class="section">
 
+    <div class="card form-card">
+
+        <h2>Student Login / Sign Up</h2>
+
+        <p class="small">
+            Create an account or log in to access your career dashboard.
+        </p>
+
+        <label>Email</label>
+
+        <input
+            id="authEmail"
+            type="email"
+            placeholder="Enter your email"
+        >
+
+        <label>Password</label>
+
+        <input
+            id="authPassword"
+            type="password"
+            placeholder="Enter your password"
+        >
+
+        <button class="primary full-button"
+                onclick="signUpUser()">
+            Create Account
+        </button>
+
+        <button class="primary full-button"
+                onclick="loginUser()">
+            Login
+        </button>
+
+        <div id="authMessage" class="success"></div>
+
+    </div>
+
+</section>
 <section id="home" class="section active">
 
     <div class="card hero">
@@ -1479,6 +1522,93 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_PUBLISHABLE_KEY
 );
 </script>
+<script>
+async function signUpUser() {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+    const message = document.getElementById("authMessage");
 
+    if (!email || !password) {
+        alert("Please enter your email and password.");
+        return;
+    }
+
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters.");
+        return;
+    }
+
+    const { error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        message.style.display = "block";
+        message.textContent = error.message;
+        return;
+    }
+
+    message.style.display = "block";
+    message.textContent =
+        "Account created successfully! Check your email if confirmation is enabled.";
+}
+
+async function loginUser() {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+
+    if (!email || !password) {
+        alert("Please enter your email and password.");
+        return;
+    }
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    updateAuthUI();
+    showSection("dashboard");
+    alert("Login successful!");
+}
+
+async function logoutUser() {
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    updateAuthUI();
+    showSection("home");
+    alert("You have been logged out.");
+}
+
+async function updateAuthUI() {
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    const logoutButton = document.getElementById("logoutButton");
+
+    if (logoutButton) {
+        logoutButton.style.display =
+            user ? "inline-block" : "none";
+    }
+}
+
+supabaseClient.auth.onAuthStateChange(() => {
+    updateAuthUI();
+});
+
+updateAuthUI();
+</script>
 </body>
 </html>
