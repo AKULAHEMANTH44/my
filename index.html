@@ -1416,56 +1416,140 @@ async function loadProfileFromSupabase() {
    DISPLAY JOBS
 ========================================================= */
 
-function displayJobs() {
+
+async function  {displayJobs();
 
     const container =
-        document.getElementById(
-            "jobsContainer"
+        document.getElementById("jobsContainer");
+
+    container.innerHTML = `
+        <p class="small">Loading jobs...</p>
+    `;
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("jobs")
+            .select(`
+                id,
+                company_id,
+                title,
+                description,
+                location,
+                companies (
+                    name
+                )
+            `)
+            .order("id", {
+                ascending: true
+            });
+
+        if (error) {
+            console.error(
+                "Jobs load error:",
+                error
+            );
+
+            container.innerHTML = `
+                <div class="card">
+                    <p>
+                        Could not load jobs from Supabase.
+                    </p>
+                </div>
+            `;
+
+            return;
+        }
+
+        if (!data || data.length === 0) {
+
+            container.innerHTML = `
+                <div class="card">
+                    <p>
+                        No jobs are available right now.
+                    </p>
+                </div>
+            `;
+
+            return;
+        }
+
+        /*
+         * Convert database jobs into the same format
+         * used by the rest of the website.
+         */
+        jobs = data.map(job => ({
+            id: job.id,
+            role: job.title,
+            company:
+                job.companies?.name ||
+                `Company ${job.company_id}`,
+            skills: job.description || "",
+            location: job.location || ""
+        }));
+
+        container.innerHTML = "";
+
+        jobs.forEach(job => {
+
+            const card =
+                document.createElement("div");
+
+            card.className = "job-card";
+
+            card.innerHTML = `
+
+                <span class="badge">
+                    Job ID: ${job.id}
+                </span>
+
+                <h3>${job.role}</h3>
+
+                <p>
+                    <strong>Company:</strong>
+                    ${job.company}
+                </p>
+
+                <p>
+                    <strong>Skills / Description:</strong>
+                    ${job.skills}
+                </p>
+
+                <p>
+                    <strong>Location:</strong>
+                    ${job.location}
+                </p>
+
+                <button
+                    class="primary"
+                    onclick="chooseJob(${job.id})">
+                    Apply Now
+                </button>
+
+            `;
+
+            container.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Jobs exception:",
+            error
         );
 
-    container.innerHTML = "";
-
-    jobs.forEach(job => {
-
-        const card =
-            document.createElement("div");
-
-        card.className =
-            "job-card";
-
-        card.innerHTML = `
-
-            <span class="badge">
-                Job ID: ${job.id}
-            </span>
-
-            <h3>${job.role}</h3>
-
-            <p>
-                <strong>Company:</strong>
-                ${job.company}
-            </p>
-
-            <p>
-                <strong>Skills:</strong>
-                ${job.skills}
-            </p>
-
-            <p>
-                <strong>Location:</strong>
-                ${job.location}
-            </p>
-
-            <button
-                class="primary"
-                onclick="chooseJob(${job.id})">
-                Apply Now
-            </button>
+        container.innerHTML = `
+            <div class="card">
+                <p>
+                    Could not connect to Supabase.
+                </p>
+            </div>
         `;
-
-        container.appendChild(card);
-
-    });
+    }
 }
 
 
@@ -2149,10 +2233,10 @@ supabaseClient.auth.onAuthStateChange(
    INITIALIZE
 ========================================================= */
 
-async function initializeApp() {
-
-    displayJobs();
-
+async function initializeApp()  {
+    
+    await displayJobs();
+    
     populateJobSelects();
 
     try {
