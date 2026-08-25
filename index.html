@@ -878,49 +878,84 @@ function chooseJob(jobId) {
    PROFILE
 ========================= */
 
-function saveProfile() {
+async function saveProfile() {
+
+    const {
+        data: { user },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+    if (userError || !user) {
+        alert("Please log in before saving your profile.");
+        showSection("auth");
+        return;
+    }
+
+    const fullName =
+        document.getElementById("profileName").value.trim();
+
+    const email =
+        document.getElementById("profileEmail").value.trim()
+        || user.email
+        || "";
+
+    const college =
+        document.getElementById("profileCollege").value.trim();
+
+    const branch =
+        document.getElementById("profileBranch").value;
+
+    const skills =
+        document.getElementById("profileSkills").value.trim();
+
+    const about =
+        document.getElementById("profileAbout").value.trim();
+
+    if (!fullName || !email) {
+        alert("Please enter your name and email.");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("profiles")
+        .update({
+            full_name: fullName,
+            email: email,
+            college: college,
+            branch: branch,
+            skills: skills
+        })
+        .eq("id", user.id);
+
+    if (error) {
+        console.error("Profile save error:", error);
+        alert("Could not save your profile: " + error.message);
+        return;
+    }
 
     profile = {
-
-        name:
-            document.getElementById("profileName").value.trim(),
-
-        email:
-            document.getElementById("profileEmail").value.trim(),
-
-        college:
-            document.getElementById("profileCollege").value.trim(),
-
-        branch:
-            document.getElementById("profileBranch").value,
-
-        skills:
-            document.getElementById("profileSkills").value.trim(),
-
-        about:
-            document.getElementById("profileAbout").value.trim()
-
+        name: fullName,
+        email: email,
+        college: college,
+        branch: branch,
+        skills: skills,
+        about: about
     };
 
+    const successMessage =
+        document.getElementById("profileSuccess");
 
-    localStorage.setItem(
-        "eceProfile",
-        JSON.stringify(profile)
-    );
-
-
-    document.getElementById(
-        "profileSuccess"
-    ).style.display = "block";
-
+    successMessage.style.display = "block";
+    successMessage.textContent =
+        "Profile saved successfully to Supabase!";
 
     setTimeout(() => {
-
-        document.getElementById(
-            "profileSuccess"
-        ).style.display = "none";
-
+        successMessage.style.display = "none";
     }, 2500);
+}
+
+
+    document
 
 }
 
