@@ -197,6 +197,15 @@ button {
     text-align: center;
 }
 
+.error-message {
+    display: none;
+    margin-top: 15px;
+    padding: 13px;
+    background: #fdecec;
+    color: #a12622;
+    border-radius: 8px;
+}
+
 .profile-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -269,14 +278,6 @@ button {
     margin: 15px;
 }
 
-footer {
-    background: #173b7a;
-    color: white;
-    text-align: center;
-    padding: 22px;
-    margin-top: 50px;
-}
-
 .small {
     color: #666;
     font-size: 14px;
@@ -284,7 +285,14 @@ footer {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
+}
+
+.auth-user {
+    text-align: center;
+    margin-top: 10px;
+    color: #173b7a;
+    font-weight: bold;
 }
 
 @media(max-width:600px) {
@@ -313,14 +321,60 @@ footer {
     <button onclick="showSection('apply')">Apply</button>
     <button onclick="showSection('interview')">HR Interview</button>
     <button onclick="showSection('dashboard')">Dashboard</button>
-<button onclick="showSection('auth')">Login / Sign Up</button>
-<button id="logoutButton" onclick="logoutUser()" style="display:none;">
-    Logout
-</button></nav>
+    <button onclick="showSection('auth')" id="authNavButton">Login / Sign Up</button>
+    <button onclick="logoutUser()" id="logoutButton" style="display:none;">
+        Logout
+    </button>
+</nav>
 
 <div class="container">
 
 <!-- HOME -->
+
+<section id="home" class="section active">
+
+    <div class="card hero">
+
+        <h2>Welcome to ECE Career Connect</h2>
+
+        <p>
+            A career platform designed for Electronics and Communication
+            Engineering students to discover opportunities, apply for jobs,
+            and practice HR interviews.
+        </p>
+
+        <button class="primary" onclick="showSection('profile')">
+            Create My Profile
+        </button>
+
+        <div id="homeUser" class="auth-user"></div>
+
+    </div>
+
+    <div class="profile-grid">
+
+        <div class="stat">
+            <h3>4+</h3>
+            <p>Job Opportunities</p>
+        </div>
+
+        <div class="stat">
+            <h3>5</h3>
+            <p>HR Interview Questions</p>
+        </div>
+
+        <div class="stat">
+            <h3>100%</h3>
+            <p>Student Focused</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- AUTH -->
+
 <section id="auth" class="section">
 
     <div class="card form-card">
@@ -347,55 +401,20 @@ footer {
             placeholder="Enter your password"
         >
 
-        <button class="primary full-button"
-                onclick="signUpUser()">
+        <button
+            class="primary full-button"
+            onclick="signUpUser()">
             Create Account
         </button>
 
-        <button class="primary full-button"
-                onclick="loginUser()">
+        <button
+            class="primary full-button"
+            onclick="loginUser()">
             Login
         </button>
 
         <div id="authMessage" class="success"></div>
-
-    </div>
-
-</section>
-<section id="home" class="section active">
-
-    <div class="card hero">
-
-        <h2>Welcome to ECE Career Connect</h2>
-
-        <p>
-            A career platform designed for Electronics and Communication
-            Engineering students to discover opportunities, apply for jobs,
-            and practice HR interviews.
-        </p>
-
-        <button class="primary" onclick="showSection('profile')">
-            Create My Profile
-        </button>
-
-    </div>
-
-    <div class="profile-grid">
-
-        <div class="stat">
-            <h3>4+</h3>
-            <p>Job Opportunities</p>
-        </div>
-
-        <div class="stat">
-            <h3>5</h3>
-            <p>HR Interview Questions</p>
-        </div>
-
-        <div class="stat">
-            <h3>100%</h3>
-            <p>Student Focused</p>
-        </div>
+        <div id="authError" class="error-message"></div>
 
     </div>
 
@@ -414,17 +433,33 @@ footer {
             Create your profile before applying for opportunities.
         </p>
 
+        <div id="profileAuthWarning" class="error-message">
+            Please log in before saving your profile.
+        </div>
+
         <label>Full Name</label>
-        <input id="profileName" type="text"
-               placeholder="Enter your full name">
+
+        <input
+            id="profileName"
+            type="text"
+            placeholder="Enter your full name"
+        >
 
         <label>Email</label>
-        <input id="profileEmail" type="email"
-               placeholder="Enter your email">
+
+        <input
+            id="profileEmail"
+            type="email"
+            placeholder="Enter your email"
+        >
 
         <label>College</label>
-        <input id="profileCollege" type="text"
-               placeholder="Enter your college name">
+
+        <input
+            id="profileCollege"
+            type="text"
+            placeholder="Enter your college name"
+        >
 
         <label>Branch</label>
 
@@ -439,16 +474,19 @@ footer {
 
         <label>Skills</label>
 
-        <textarea id="profileSkills"
-                  placeholder="Example: C, C++, Arduino, Embedded Systems"></textarea>
+        <textarea
+            id="profileSkills"
+            placeholder="Example: C, C++, Arduino, Embedded Systems"></textarea>
 
         <label>About Me</label>
 
-        <textarea id="profileAbout"
-                  placeholder="Tell companies about yourself"></textarea>
+        <textarea
+            id="profileAbout"
+            placeholder="Tell companies about yourself"></textarea>
 
-        <button class="primary full-button"
-                onclick="saveProfile()">
+        <button
+            class="primary full-button"
+            onclick="saveProfile()">
             Save Profile
         </button>
 
@@ -467,8 +505,9 @@ footer {
 
     <div class="card">
         <h2>Available Opportunities</h2>
+
         <p class="small">
-            Explore internships and entry-level software opportunities.
+            Explore internships and entry-level opportunities.
         </p>
     </div>
 
@@ -493,23 +532,29 @@ footer {
 
         <label>Your Name</label>
 
-        <input id="applicationName"
-               type="text"
-               placeholder="Enter your name">
+        <input
+            id="applicationName"
+            type="text"
+            placeholder="Enter your name"
+        >
 
         <label>Email</label>
 
-        <input id="applicationEmail"
-               type="email"
-               placeholder="Enter your email">
+        <input
+            id="applicationEmail"
+            type="email"
+            placeholder="Enter your email"
+        >
 
         <label>Why should we consider you?</label>
 
-        <textarea id="applicationReason"
-                  placeholder="Write a short answer"></textarea>
+        <textarea
+            id="applicationReason"
+            placeholder="Write a short answer"></textarea>
 
-        <button class="primary full-button"
-                onclick="submitApplication()">
+        <button
+            class="primary full-button"
+            onclick="submitApplication()">
             Submit Application
         </button>
 
@@ -543,13 +588,13 @@ footer {
                 <option value="">Select a job</option>
             </select>
 
-            <button class="primary full-button"
-                    onclick="startInterview()">
+            <button
+                class="primary full-button"
+                onclick="startInterview()">
                 Start HR Interview
             </button>
 
         </div>
-
 
         <div id="interviewArea" class="hidden">
 
@@ -569,18 +614,19 @@ footer {
 
             <label>Your Answer</label>
 
-            <textarea id="answerBox"
-                      placeholder="Type your answer here..."></textarea>
+            <textarea
+                id="answerBox"
+                placeholder="Type your answer here..."></textarea>
 
-            <button class="primary full-button"
-                    onclick="nextQuestion()">
+            <button
+                class="primary full-button"
+                onclick="nextQuestion()">
                 Next Question
             </button>
 
         </div>
 
     </div>
-
 
     <div id="interviewResult" class="hidden">
 
@@ -594,8 +640,9 @@ footer {
 
             <p id="resultMessage"></p>
 
-            <button class="primary"
-                    onclick="showSection('dashboard')">
+            <button
+                class="primary"
+                onclick="showSection('dashboard')">
                 View Dashboard
             </button>
 
@@ -618,8 +665,9 @@ footer {
             Welcome!
         </p>
 
-    </div>
+        <p id="dashboardEmail" class="small"></p>
 
+    </div>
 
     <div class="profile-grid">
 
@@ -640,7 +688,6 @@ footer {
 
     </div>
 
-
     <div class="card">
 
         <h2>My Applications</h2>
@@ -653,7 +700,6 @@ footer {
 
 </div>
 
-
 <footer>
     <p>
         © 2026 ECE Career Connect |
@@ -662,11 +708,31 @@ footer {
 </footer>
 
 
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
-/* =========================
+/* =========================================================
+   SUPABASE CONNECTION
+========================================================= */
+
+const SUPABASE_URL =
+    "https://vvriydyncvzhsrxhpmun.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+/* =========================================================
    JOB DATA
-========================= */
+========================================================= */
 
 const jobs = [
 
@@ -705,28 +771,42 @@ const jobs = [
 ];
 
 
-/* =========================
-   STORAGE
-========================= */
-
-let profile =
-    JSON.parse(localStorage.getItem("eceProfile")) || {};
+/* =========================================================
+   LOCAL APPLICATION / INTERVIEW STORAGE
+========================================================= */
 
 let applications =
-    JSON.parse(localStorage.getItem("eceApplications")) || [];
+    JSON.parse(
+        localStorage.getItem("eceApplications") || "[]"
+    );
 
 let interviewData =
-    JSON.parse(localStorage.getItem("eceInterview")) || {
+    JSON.parse(
+        localStorage.getItem("eceInterview") || "null"
+    ) || {
         score: null,
         jobId: null
     };
 
+let profile = {};
 
-/* =========================
+
+/* =========================================================
    NAVIGATION
-========================= */
+========================================================= */
 
 function showSection(sectionId) {
+
+    if (
+        ["profile", "apply", "interview", "dashboard"]
+            .includes(sectionId)
+    ) {
+        if (!currentUser) {
+            alert("Please log in first.");
+            showSection("auth");
+            return;
+        }
+    }
 
     document
         .querySelectorAll(".section")
@@ -734,9 +814,12 @@ function showSection(sectionId) {
             section.classList.remove("active");
         });
 
-    document
-        .getElementById(sectionId)
-        .classList.add("active");
+    const target =
+        document.getElementById(sectionId);
+
+    if (target) {
+        target.classList.add("active");
+    }
 
     if (sectionId === "dashboard") {
         updateDashboard();
@@ -749,14 +832,596 @@ function showSection(sectionId) {
 }
 
 
-/* =========================
+/* =========================================================
+   CURRENT AUTH USER
+========================================================= */
+
+let currentUser = null;
+
+
+/* =========================================================
+   AUTH UI
+========================================================= */
+
+async function updateAuthUI() {
+
+    try {
+
+        const {
+            data: { user },
+            error
+        } = await supabaseClient.auth.getUser();
+
+        if (error) {
+            console.error("Auth user error:", error);
+            return;
+        }
+
+        currentUser = user || null;
+
+        const logoutButton =
+            document.getElementById("logoutButton");
+
+        const authNavButton =
+            document.getElementById("authNavButton");
+
+        const homeUser =
+            document.getElementById("homeUser");
+
+        if (currentUser) {
+
+            logoutButton.style.display =
+                "inline-block";
+
+            authNavButton.textContent =
+                "Account";
+
+            homeUser.textContent =
+                "Logged in as " + currentUser.email;
+
+            document.getElementById(
+                "dashboardEmail"
+            ).textContent =
+                currentUser.email;
+
+        } else {
+
+            logoutButton.style.display =
+                "none";
+
+            authNavButton.textContent =
+                "Login / Sign Up";
+
+            homeUser.textContent = "";
+
+            document.getElementById(
+                "dashboardEmail"
+            ).textContent = "";
+
+        }
+
+    } catch (error) {
+
+        console.error("updateAuthUI error:", error);
+
+    }
+}
+
+
+/* =========================================================
+   SIGN UP
+========================================================= */
+
+async function signUpUser() {
+
+    hideAuthMessages();
+
+    const email =
+        document
+            .getElementById("authEmail")
+            .value
+            .trim();
+
+    const password =
+        document
+            .getElementById("authPassword")
+            .value;
+
+    if (!email || !password) {
+
+        showAuthError(
+            "Please enter your email and password."
+        );
+
+        return;
+    }
+
+    if (password.length < 6) {
+
+        showAuthError(
+            "Password must be at least 6 characters."
+        );
+
+        return;
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient.auth.signUp({
+
+            email: email,
+
+            password: password
+
+        });
+
+        if (error) {
+
+            console.error("Signup error:", error);
+
+            showAuthError(error.message);
+
+            return;
+        }
+
+        if (data.user) {
+
+            showAuthSuccess(
+                data.session
+                    ? "Account created successfully! You are now logged in."
+                    : "Account created successfully! Check your email if confirmation is required."
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error("Signup exception:", error);
+
+        showAuthError(
+            "Could not connect to Supabase."
+        );
+
+    }
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function loginUser() {
+
+    hideAuthMessages();
+
+    const email =
+        document
+            .getElementById("authEmail")
+            .value
+            .trim();
+
+    const password =
+        document
+            .getElementById("authPassword")
+            .value;
+
+    if (!email || !password) {
+
+        showAuthError(
+            "Please enter your email and password."
+        );
+
+        return;
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+        if (error) {
+
+            console.error("Login error:", error);
+
+            showAuthError(error.message);
+
+            return;
+        }
+
+        currentUser =
+            data.user || null;
+
+        await loadProfileFromSupabase();
+
+        await updateAuthUI();
+
+        alert("Login successful!");
+
+        showSection("dashboard");
+
+    } catch (error) {
+
+        console.error("Login exception:", error);
+
+        showAuthError(
+            "Could not connect to Supabase."
+        );
+
+    }
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logoutUser() {
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient.auth.signOut();
+
+        if (error) {
+
+            alert(error.message);
+
+            return;
+        }
+
+        currentUser = null;
+        profile = {};
+
+        await updateAuthUI();
+
+        showSection("home");
+
+        alert("You have been logged out.");
+
+    } catch (error) {
+
+        console.error("Logout error:", error);
+
+        alert(
+            "There was a problem logging out."
+        );
+
+    }
+}
+
+
+/* =========================================================
+   AUTH MESSAGES
+========================================================= */
+
+function hideAuthMessages() {
+
+    document.getElementById(
+        "authMessage"
+    ).style.display = "none";
+
+    document.getElementById(
+        "authError"
+    ).style.display = "none";
+}
+
+function showAuthSuccess(message) {
+
+    const element =
+        document.getElementById("authMessage");
+
+    element.textContent = message;
+    element.style.display = "block";
+
+}
+
+function showAuthError(message) {
+
+    const element =
+        document.getElementById("authError");
+
+    element.textContent = message;
+    element.style.display = "block";
+
+}
+
+
+/* =========================================================
+   SAVE PROFILE TO SUPABASE
+========================================================= */
+
+async function saveProfile() {
+
+    const profileSuccess =
+        document.getElementById(
+            "profileSuccess"
+        );
+
+    const profileWarning =
+        document.getElementById(
+            "profileAuthWarning"
+        );
+
+    profileSuccess.style.display =
+        "none";
+
+    profileWarning.style.display =
+        "none";
+
+    if (!currentUser) {
+
+        profileWarning.textContent =
+            "Please log in before saving your profile.";
+
+        profileWarning.style.display =
+            "block";
+
+        showSection("auth");
+
+        return;
+    }
+
+    const fullName =
+        document
+            .getElementById("profileName")
+            .value
+            .trim();
+
+    const email =
+        document
+            .getElementById("profileEmail")
+            .value
+            .trim()
+        || currentUser.email
+        || "";
+
+    const college =
+        document
+            .getElementById("profileCollege")
+            .value
+            .trim();
+
+    const branch =
+        document
+            .getElementById("profileBranch")
+            .value;
+
+    const skills =
+        document
+            .getElementById("profileSkills")
+            .value
+            .trim();
+
+    const about =
+        document
+            .getElementById("profileAbout")
+            .value
+            .trim();
+
+
+    if (!fullName || !email) {
+
+        profileWarning.textContent =
+            "Please enter your name and email.";
+
+        profileWarning.style.display =
+            "block";
+
+        return;
+    }
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("profiles")
+                .update({
+                    full_name: fullName,
+                    email: email,
+                    college: college,
+                    branch: branch,
+                    skills: skills
+                })
+                .eq("id", currentUser.id);
+
+        if (error) {
+
+            console.error(
+                "Profile save error:",
+                error
+            );
+
+            /*
+             * If the profile row doesn't exist,
+             * create it.
+             */
+
+            const {
+                error: upsertError
+            } =
+                await supabaseClient
+                    .from("profiles")
+                    .upsert({
+                        id: currentUser.id,
+                        full_name: fullName,
+                        email: email,
+                        college: college,
+                        branch: branch,
+                        skills: skills,
+                        role: "student"
+                    });
+
+            if (upsertError) {
+
+                console.error(
+                    "Profile upsert error:",
+                    upsertError
+                );
+
+                alert(
+                    "Could not save your profile: " +
+                    upsertError.message
+                );
+
+                return;
+            }
+        }
+
+        profile = {
+            name: fullName,
+            email: email,
+            college: college,
+            branch: branch,
+            skills: skills,
+            about: about
+        };
+
+        localStorage.setItem(
+            "eceProfile",
+            JSON.stringify(profile)
+        );
+
+        profileSuccess.textContent =
+            "Profile saved successfully to Supabase!";
+
+        profileSuccess.style.display =
+            "block";
+
+        updateDashboard();
+
+    } catch (error) {
+
+        console.error(
+            "Profile exception:",
+            error
+        );
+
+        alert(
+            "Could not connect to Supabase."
+        );
+
+    }
+}
+
+
+/* =========================================================
+   LOAD PROFILE FROM SUPABASE
+========================================================= */
+
+async function loadProfileFromSupabase() {
+
+    if (!currentUser) {
+        return;
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("profiles")
+                .select("*")
+                .eq("id", currentUser.id)
+                .maybeSingle();
+
+        if (error) {
+
+            console.error(
+                "Profile load error:",
+                error
+            );
+
+            return;
+        }
+
+        if (!data) {
+            return;
+        }
+
+        profile = {
+
+            name:
+                data.full_name || "",
+
+            email:
+                data.email || currentUser.email || "",
+
+            college:
+                data.college || "",
+
+            branch:
+                data.branch || "",
+
+            skills:
+                data.skills || "",
+
+            about:
+                localStorage.getItem(
+                    "eceProfileAbout"
+                ) || ""
+
+        };
+
+        document.getElementById(
+            "profileName"
+        ).value = profile.name;
+
+        document.getElementById(
+            "profileEmail"
+        ).value = profile.email;
+
+        document.getElementById(
+            "profileCollege"
+        ).value = profile.college;
+
+        document.getElementById(
+            "profileBranch"
+        ).value = profile.branch;
+
+        document.getElementById(
+            "profileSkills"
+        ).value = profile.skills;
+
+        document.getElementById(
+            "profileAbout"
+        ).value = profile.about;
+
+    } catch (error) {
+
+        console.error(
+            "loadProfileFromSupabase error:",
+            error
+        );
+
+    }
+}
+
+
+/* =========================================================
    DISPLAY JOBS
-========================= */
+========================================================= */
 
 function displayJobs() {
 
     const container =
-        document.getElementById("jobsContainer");
+        document.getElementById(
+            "jobsContainer"
+        );
 
     container.innerHTML = "";
 
@@ -765,7 +1430,8 @@ function displayJobs() {
         const card =
             document.createElement("div");
 
-        card.className = "job-card";
+        card.className =
+            "job-card";
 
         card.innerHTML = `
 
@@ -793,30 +1459,31 @@ function displayJobs() {
             <button
                 class="primary"
                 onclick="chooseJob(${job.id})">
-
                 Apply Now
-
             </button>
         `;
 
         container.appendChild(card);
 
     });
-
 }
 
 
-/* =========================
+/* =========================================================
    JOB DROPDOWNS
-========================= */
+========================================================= */
 
 function populateJobSelects() {
 
     const jobSelect =
-        document.getElementById("jobSelect");
+        document.getElementById(
+            "jobSelect"
+        );
 
     const interviewJob =
-        document.getElementById("interviewJob");
+        document.getElementById(
+            "interviewJob"
+        );
 
     jobs.forEach(job => {
 
@@ -842,162 +1509,68 @@ function populateJobSelects() {
         interviewJob.appendChild(option2);
 
     });
-
 }
 
 
-/* =========================
+/* =========================================================
    CHOOSE JOB
-========================= */
+========================================================= */
 
 function chooseJob(jobId) {
 
-    document.getElementById("jobSelect").value =
-        jobId;
+    if (!currentUser) {
 
-    if (profile.name) {
+        alert(
+            "Please log in before applying for a job."
+        );
 
-        document.getElementById("applicationName").value =
-            profile.name;
-
-    }
-
-    if (profile.email) {
-
-        document.getElementById("applicationEmail").value =
-            profile.email;
-
-    }
-
-    showSection("apply");
-
-}
-
-
-/* =========================
-   PROFILE
-========================= */
-
-async function saveProfile() {
-
-    const {
-        data: { user },
-        error: userError
-    } = await supabaseClient.auth.getUser();
-
-    if (userError || !user) {
-        alert("Please log in before saving your profile.");
         showSection("auth");
+
         return;
     }
 
-    const fullName =
-        document.getElementById("profileName").value.trim();
+    document.getElementById(
+        "jobSelect"
+    ).value = jobId;
 
-    const email =
-        document.getElementById("profileEmail").value.trim()
-        || user.email
-        || "";
-
-    const college =
-        document.getElementById("profileCollege").value.trim();
-
-    const branch =
-        document.getElementById("profileBranch").value;
-
-    const skills =
-        document.getElementById("profileSkills").value.trim();
-
-    const about =
-        document.getElementById("profileAbout").value.trim();
-
-    if (!fullName || !email) {
-        alert("Please enter your name and email.");
-        return;
-    }
-
-    const { error } = await supabaseClient
-        .from("profiles")
-        .update({
-            full_name: fullName,
-            email: email,
-            college: college,
-            branch: branch,
-            skills: skills
-        })
-        .eq("id", user.id);
-
-    if (error) {
-        console.error("Profile save error:", error);
-        alert("Could not save your profile: " + error.message);
-        return;
-    }
-
-    profile = {
-        name: fullName,
-        email: email,
-        college: college,
-        branch: branch,
-        skills: skills,
-        about: about
-    };
-
-    const successMessage =
-        document.getElementById("profileSuccess");
-
-    successMessage.style.display = "block";
-    successMessage.textContent =
-        "Profile saved successfully to Supabase!";
-
-    setTimeout(() => {
-        successMessage.style.display = "none";
-    }, 2500);
-}
-
-
-    document
-
-}
-
-
-/* =========================
-   LOAD PROFILE
-========================= */
-
-function loadProfile() {
-
-    if (!profile.name) return;
-
-    document.getElementById("profileName").value =
+    document.getElementById(
+        "applicationName"
+    ).value =
         profile.name || "";
 
-    document.getElementById("profileEmail").value =
-        profile.email || "";
+    document.getElementById(
+        "applicationEmail"
+    ).value =
+        profile.email ||
+        currentUser.email ||
+        "";
 
-    document.getElementById("profileCollege").value =
-        profile.college || "";
-
-    document.getElementById("profileBranch").value =
-        profile.branch || "";
-
-    document.getElementById("profileSkills").value =
-        profile.skills || "";
-
-    document.getElementById("profileAbout").value =
-        profile.about || "";
-
+    showSection("apply");
 }
 
 
-/* =========================
+/* =========================================================
    APPLICATION
-========================= */
+========================================================= */
 
 function submitApplication() {
 
+    if (!currentUser) {
+
+        alert(
+            "Please log in before applying."
+        );
+
+        showSection("auth");
+
+        return;
+    }
+
     const jobId =
         parseInt(
-            document.getElementById("jobSelect").value
+            document.getElementById(
+                "jobSelect"
+            ).value
         );
 
     const name =
@@ -1015,8 +1588,12 @@ function submitApplication() {
             "applicationReason"
         ).value.trim();
 
-
-    if (!jobId || !name || !email || !reason) {
+    if (
+        !jobId ||
+        !name ||
+        !email ||
+        !reason
+    ) {
 
         alert(
             "Please complete all application fields."
@@ -1025,75 +1602,94 @@ function submitApplication() {
         return;
     }
 
-
     const job =
-        jobs.find(j => j.id === jobId);
+        jobs.find(
+            j => j.id === jobId
+        );
 
+    if (!job) {
+        alert("Selected job was not found.");
+        return;
+    }
 
     const application = {
 
         id: Date.now(),
 
-        jobId: job.id,
+        userId:
+            currentUser.id,
 
-        company: job.company,
+        jobId:
+            job.id,
 
-        role: job.role,
+        company:
+            job.company,
 
-        location: job.location,
+        role:
+            job.role,
 
-        name: name,
+        location:
+            job.location,
 
-        email: email,
+        name:
+            name,
 
-        reason: reason,
+        email:
+            email,
 
-        status: "Application Submitted",
+        reason:
+            reason,
 
-        interviewCompleted: false,
+        status:
+            "Application Submitted",
 
-        interviewScore: null,
+        interviewCompleted:
+            false,
 
-        date: new Date().toLocaleString()
+        interviewScore:
+            null,
+
+        date:
+            new Date().toLocaleString()
 
     };
 
-
-    applications.push(application);
-
+    applications.push(
+        application
+    );
 
     localStorage.setItem(
         "eceApplications",
-        JSON.stringify(applications)
+        JSON.stringify(
+            applications
+        )
     );
-
 
     document.getElementById(
         "applicationSuccess"
-    ).style.display = "block";
-
+    ).style.display =
+        "block";
 
     document.getElementById(
         "applicationReason"
     ).value = "";
 
-
     setTimeout(() => {
 
         document.getElementById(
             "applicationSuccess"
-        ).style.display = "none";
+        ).style.display =
+            "none";
 
         showSection("dashboard");
 
-    }, 1800);
-
+    }, 1200);
 }
 
 
-/* =========================
+/* =========================================================
    HR INTERVIEW
-========================= */
+========================================================= */
 
 const questions = [
 
@@ -1109,62 +1705,67 @@ const questions = [
 
 ];
 
-
 let currentQuestionIndex = 0;
-
 let answers = [];
-
 let selectedInterviewJob = null;
 
 
-/* =========================
+/* =========================================================
    START INTERVIEW
-========================= */
+========================================================= */
 
 function startInterview() {
 
-    selectedInterviewJob =
-        parseInt(
-            document.getElementById("interviewJob").value
+    if (!currentUser) {
+
+        alert(
+            "Please log in before starting the interview."
         );
 
-
-    if (!selectedInterviewJob) {
-
-        alert("Please select a job first.");
+        showSection("auth");
 
         return;
     }
 
+    selectedInterviewJob =
+        parseInt(
+            document.getElementById(
+                "interviewJob"
+            ).value
+        );
+
+    if (!selectedInterviewJob) {
+
+        alert(
+            "Please select a job first."
+        );
+
+        return;
+    }
 
     currentQuestionIndex = 0;
 
     answers = [];
 
-
     document.getElementById(
         "interviewStart"
     ).classList.add("hidden");
-
 
     document.getElementById(
         "interviewArea"
     ).classList.remove("hidden");
 
-
     document.getElementById(
         "interviewResult"
     ).classList.add("hidden");
 
-
     showQuestion();
-
 }
 
 
-/* =========================
+/* =========================================================
    SHOW QUESTION
-========================= */
+========================================================= */
 
 function showQuestion() {
 
@@ -1173,23 +1774,22 @@ function showQuestion() {
     ).textContent =
         currentQuestionIndex + 1;
 
-
     document.getElementById(
         "questionText"
     ).textContent =
-        questions[currentQuestionIndex];
-
+        questions[
+            currentQuestionIndex
+        ];
 
     document.getElementById(
         "answerBox"
     ).value = "";
-
 }
 
 
-/* =========================
+/* =========================================================
    NEXT QUESTION
-========================= */
+========================================================= */
 
 function nextQuestion() {
 
@@ -1197,7 +1797,6 @@ function nextQuestion() {
         document.getElementById(
             "answerBox"
         ).value.trim();
-
 
     if (answer.length < 10) {
 
@@ -1208,12 +1807,9 @@ function nextQuestion() {
         return;
     }
 
-
     answers.push(answer);
 
-
     currentQuestionIndex++;
-
 
     if (
         currentQuestionIndex <
@@ -1227,31 +1823,29 @@ function nextQuestion() {
         finishInterview();
 
     }
-
 }
 
 
-/* =========================
+/* =========================================================
    INTERVIEW SCORE
-========================= */
+========================================================= */
 
 function calculateScore() {
 
     let score = 0;
-
 
     answers.forEach(answer => {
 
         const words =
             answer.split(/\s+/).length;
 
-
-        if (words >= 10)
+        if (words >= 10) {
             score += 12;
+        }
 
-        if (words >= 20)
+        if (words >= 20) {
             score += 4;
-
+        }
 
         const technicalWords = [
 
@@ -1268,11 +1862,11 @@ function calculateScore() {
 
         ];
 
-
         technicalWords.forEach(word => {
 
             if (
-                answer.toLowerCase()
+                answer
+                    .toLowerCase()
                     .includes(word)
             ) {
 
@@ -1284,40 +1878,39 @@ function calculateScore() {
 
     });
 
-
-    if (score > 100)
+    if (score > 100) {
         score = 100;
-
+    }
 
     return score;
-
 }
 
 
-/* =========================
+/* =========================================================
    FINISH INTERVIEW
-========================= */
+========================================================= */
 
 function finishInterview() {
 
     const score =
         calculateScore();
 
-
     interviewData = {
 
-        score: score,
+        score:
+            score,
 
-        jobId: selectedInterviewJob
+        jobId:
+            selectedInterviewJob
 
     };
 
-
     localStorage.setItem(
         "eceInterview",
-        JSON.stringify(interviewData)
+        JSON.stringify(
+            interviewData
+        )
     );
-
 
     applications.forEach(application => {
 
@@ -1341,30 +1934,27 @@ function finishInterview() {
 
     });
 
-
     localStorage.setItem(
         "eceApplications",
-        JSON.stringify(applications)
+        JSON.stringify(
+            applications
+        )
     );
-
 
     document.getElementById(
         "interviewArea"
     ).classList.add("hidden");
 
-
     document.getElementById(
         "interviewResult"
     ).classList.remove("hidden");
 
-
     document.getElementById(
         "scoreValue"
-    ).textContent = score;
-
+    ).textContent =
+        score;
 
     let message;
-
 
     if (score >= 80) {
 
@@ -1383,17 +1973,16 @@ function finishInterview() {
 
     }
 
-
     document.getElementById(
         "resultMessage"
-    ).textContent = message;
-
+    ).textContent =
+        message;
 }
 
 
-/* =========================
+/* =========================================================
    DASHBOARD
-========================= */
+========================================================= */
 
 function updateDashboard() {
 
@@ -1402,18 +1991,23 @@ function updateDashboard() {
             "dashboardWelcome"
         );
 
-
     welcome.textContent =
         profile.name
             ? `Welcome, ${profile.name}!`
-            : "Welcome! Create your profile to get started.";
-
+            : (
+                currentUser
+                    ? "Welcome!"
+                    : "Please log in to continue."
+            );
 
     document.getElementById(
         "applicationCount"
     ).textContent =
-        applications.length;
-
+        applications.filter(
+            app =>
+                !currentUser ||
+                app.userId === currentUser.id
+        ).length;
 
     document.getElementById(
         "interviewScore"
@@ -1421,7 +2015,6 @@ function updateDashboard() {
         interviewData.score !== null
             ? interviewData.score + "/100"
             : "-";
-
 
     document.getElementById(
         "profileStatus"
@@ -1431,15 +2024,13 @@ function updateDashboard() {
             ? "Complete"
             : "Incomplete";
 
-
     displayApplications();
-
 }
 
 
-/* =========================
+/* =========================================================
    DISPLAY APPLICATIONS
-========================= */
+========================================================= */
 
 function displayApplications() {
 
@@ -1448,8 +2039,18 @@ function displayApplications() {
             "applicationsContainer"
         );
 
+    const userApplications =
+        currentUser
+            ? applications.filter(
+                app =>
+                    app.userId ===
+                    currentUser.id
+            )
+            : [];
 
-    if (applications.length === 0) {
+    if (
+        userApplications.length === 0
+    ) {
 
         container.innerHTML = `
 
@@ -1462,21 +2063,20 @@ function displayApplications() {
         return;
     }
 
-
     container.innerHTML = "";
 
-
-    applications
+    userApplications
         .slice()
         .reverse()
         .forEach(application => {
 
             const card =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             card.className =
                 "application-card";
-
 
             card.innerHTML = `
 
@@ -1525,125 +2125,76 @@ function displayApplications() {
 
             `;
 
-
             container.appendChild(card);
 
         });
-
 }
 
 
-/* =========================
-   INITIALIZE APP
-========================= */
+/* =========================================================
+   AUTH STATE
+========================================================= */
 
-displayJobs();
+supabaseClient.auth.onAuthStateChange(
+    async (event, session) => {
 
-populateJobSelects();
+        currentUser =
+            session?.user || null;
 
-loadProfile();
+        await updateAuthUI();
 
-updateDashboard();
+        if (currentUser) {
+            await loadProfileFromSupabase();
+        }
 
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-const SUPABASE_URL = "https://vvriydyncvzhsrxhpmun.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_NEyPa_aEvjK3lbTG4pqnHA_3pcJEDac";
-
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
+        updateDashboard();
+    }
 );
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function initializeApp() {
+
+    displayJobs();
+
+    populateJobSelects();
+
+    try {
+
+        const {
+            data: {
+                session
+            }
+        } =
+            await supabaseClient.auth.getSession();
+
+        currentUser =
+            session?.user || null;
+
+        await updateAuthUI();
+
+        if (currentUser) {
+            await loadProfileFromSupabase();
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Initialization error:",
+            error
+        );
+
+    }
+
+    updateDashboard();
+}
+
+initializeApp();
+
 </script>
-<script>
-async function signUpUser() {
-    const email = document.getElementById("authEmail").value.trim();
-    const password = document.getElementById("authPassword").value;
-    const message = document.getElementById("authMessage");
 
-    if (!email || !password) {
-        alert("Please enter your email and password.");
-        return;
-    }
-
-    if (password.length < 6) {
-        alert("Password must be at least 6 characters.");
-        return;
-    }
-
-    const { error } = await supabaseClient.auth.signUp({
-        email: email,
-        password: password
-    });
-
-    if (error) {
-        message.style.display = "block";
-        message.textContent = error.message;
-        return;
-    }
-
-    message.style.display = "block";
-    message.textContent =
-        "Account created successfully! Check your email if confirmation is enabled.";
-}
-
-async function loginUser() {
-    const email = document.getElementById("authEmail").value.trim();
-    const password = document.getElementById("authPassword").value;
-
-    if (!email || !password) {
-        alert("Please enter your email and password.");
-        return;
-    }
-
-    const { error } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
-
-    if (error) {
-        alert(error.message);
-        return;
-    }
-
-    updateAuthUI();
-    showSection("dashboard");
-    alert("Login successful!");
-}
-
-async function logoutUser() {
-    const { error } = await supabaseClient.auth.signOut();
-
-    if (error) {
-        alert(error.message);
-        return;
-    }
-
-    updateAuthUI();
-    showSection("home");
-    alert("You have been logged out.");
-}
-
-async function updateAuthUI() {
-    const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
-
-    const logoutButton = document.getElementById("logoutButton");
-
-    if (logoutButton) {
-        logoutButton.style.display =
-            user ? "inline-block" : "none";
-    }
-}
-
-supabaseClient.auth.onAuthStateChange(() => {
-    updateAuthUI();
-});
-
-updateAuthUI();
-</script>
 </body>
 </html>
