@@ -1468,6 +1468,17 @@ loadProfile();
 updateDashboard();
 
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://vvridycnvzhsrxhpmum.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_NEyPa_aEvjK3lbTG4pqnHA_3pcJEDac";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+);
+</script>
 
 </body>
 </html>
