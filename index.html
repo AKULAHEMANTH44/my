@@ -1553,139 +1553,132 @@ function chooseJob(jobId) {
    APPLICATION
 ========================================================= */
 
-function submitApplication() {
+async function submitApplication() {
 
     if (!currentUser) {
-
-        alert(
-            "Please log in before applying."
-        );
-
+        alert("Please log in before applying.");
         showSection("auth");
-
         return;
     }
 
-    const jobId =
-        parseInt(
-            document.getElementById(
-                "jobSelect"
-            ).value
-        );
+    const jobId = parseInt(
+        document.getElementById("jobSelect").value
+    );
 
-    const name =
-        document.getElementById(
-            "applicationName"
-        ).value.trim();
+    const name = document
+        .getElementById("applicationName")
+        .value
+        .trim();
 
-    const email =
-        document.getElementById(
-            "applicationEmail"
-        ).value.trim();
+    const email = document
+        .getElementById("applicationEmail")
+        .value
+        .trim();
 
-    const reason =
-        document.getElementById(
-            "applicationReason"
-        ).value.trim();
+    const reason = document
+        .getElementById("applicationReason")
+        .value
+        .trim();
 
-    if (
-        !jobId ||
-        !name ||
-        !email ||
-        !reason
-    ) {
-
-        alert(
-            "Please complete all application fields."
-        );
-
+    if (!jobId || !name || !email || !reason) {
+        alert("Please complete all application fields.");
         return;
     }
 
-    const job =
-        jobs.find(
-            j => j.id === jobId
-        );
+    const job = jobs.find(
+        j => j.id === jobId
+    );
 
     if (!job) {
         alert("Selected job was not found.");
         return;
     }
 
-    const application = {
+    try {
 
-        id: Date.now(),
+        const { data, error } =
+            await supabaseClient
+                .from("applications")
+                .insert({
+                    user_id: currentUser.id,
+                    job_id: job.id,
+                    status: "Applied"
+                })
+                .select()
+                .single();
 
-        userId:
-            currentUser.id,
+        if (error) {
+            console.error(
+                "Application save error:",
+                error
+            );
 
-        jobId:
-            job.id,
+            alert(
+                "Could not submit your application: " +
+                error.message
+            );
 
-        company:
-            job.company,
+            return;
+        }
 
-        role:
-            job.role,
+        applications.push({
+            id: data.id,
+            userId: currentUser.id,
+            jobId: job.id,
+            company: job.company,
+            role: job.role,
+            location: job.location,
+            name: name,
+            email: email,
+            reason: reason,
+            status: "Applied",
+            interviewCompleted: false,
+            interviewScore: null,
+            date: new Date().toLocaleString()
+        });
 
-        location:
-            job.location,
-
-        name:
-            name,
-
-        email:
-            email,
-
-        reason:
-            reason,
-
-        status:
-            "Application Submitted",
-
-        interviewCompleted:
-            false,
-
-        interviewScore:
-            null,
-
-        date:
-            new Date().toLocaleString()
-
-    };
-
-    applications.push(
-        application
-    );
-
-    localStorage.setItem(
-        "eceApplications",
-        JSON.stringify(
-            applications
-        )
-    );
-
-    document.getElementById(
-        "applicationSuccess"
-    ).style.display =
-        "block";
-
-    document.getElementById(
-        "applicationReason"
-    ).value = "";
-
-    setTimeout(() => {
+        localStorage.setItem(
+            "eceApplications",
+            JSON.stringify(applications)
+        );
 
         document.getElementById(
             "applicationSuccess"
-        ).style.display =
-            "none";
+        ).textContent =
+            "Application submitted successfully to Supabase!";
 
-        showSection("dashboard");
+        document.getElementById(
+            "applicationSuccess"
+        ).style.display = "block";
 
-    }, 1200);
+        document.getElementById(
+            "applicationReason"
+        ).value = "";
+
+        updateDashboard();
+
+        setTimeout(() => {
+
+            document.getElementById(
+                "applicationSuccess"
+            ).style.display = "none";
+
+            showSection("dashboard");
+
+        }, 1200);
+
+    } catch (error) {
+
+        console.error(
+            "Application exception:",
+            error
+        );
+
+        alert(
+            "Could not connect to Supabase."
+        );
+    }
 }
-
 
 /* =========================================================
    HR INTERVIEW
