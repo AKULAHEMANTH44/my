@@ -320,7 +320,7 @@ button {
     <button onclick="showSection('jobs')">Jobs</button>
     <button onclick="showSection('apply')">Apply</button>
     <button onclick="showSection('interview')">HR Interview</button>
-    <button onclick="showSection('dashboard')">Dashboard</button>
+   <button onclick="currentCompany ? showSection('companyDashboard') : showSection('dashboard')">Dashboard</button>
     <button onclick="showSection('auth')" id="authNavButton">Login / Sign Up</button>
     <button onclick="logoutUser()" id="logoutButton" style="display:none;">
         Logout
