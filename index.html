@@ -2110,102 +2110,154 @@ function updateDashboard() {
    DISPLAY APPLICATIONS
 ========================================================= */
 
-function displayApplications() {
+async function displayApplications() {
 
     const container =
-        document.getElementById(
-            "applicationsContainer"
-        );
+        document.getElementById("applicationsContainer");
 
-    const userApplications =
-        currentUser
-            ? applications.filter(
-                app =>
-                    app.userId ===
-                    currentUser.id
-            )
-            : [];
-
-    if (
-        userApplications.length === 0
-    ) {
+    if (!currentUser) {
 
         container.innerHTML = `
-
             <p class="small">
-                You haven't submitted any applications yet.
+                Please log in to view your applications.
             </p>
-
         `;
 
         return;
     }
 
-    container.innerHTML = "";
+    container.innerHTML = `
+        <p class="small">
+            Loading your applications...
+        </p>
+    `;
 
-    userApplications
-        .slice()
-        .reverse()
-        .forEach(application => {
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from("applications")
+                .select(`
+                    id,
+                    job_id,
+                    status,
+                    applied_at,
+                    jobs (
+                        title,
+                        location,
+                        companies (
+                            name
+                        )
+                    )
+                `)
+                .eq("user_id", currentUser.id)
+                .order("applied_at", {
+                    ascending: false
+                });
+
+        if (error) {
+
+            console.error(
+                "Applications load error:",
+                error
+            );
+
+            container.innerHTML = `
+                <p class="small">
+                    Could not load applications.
+                </p>
+            `;
+
+            return;
+        }
+
+        if (!data || data.length === 0) {
+
+            container.innerHTML = `
+                <p class="small">
+                    You haven't submitted any applications yet.
+                </p>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.forEach(application => {
 
             const card =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
             card.className =
                 "application-card";
 
+            const job =
+                application.jobs;
+
+            const companyName =
+                job?.companies?.name ||
+                "Company";
+
+            const jobTitle =
+                job?.title ||
+                "Job";
+
+            const location =
+                job?.location ||
+                "Not specified";
+
+            const appliedDate =
+                application.applied_at
+                    ? new Date(
+                        application.applied_at
+                    ).toLocaleString()
+                    : "Date unavailable";
+
             card.innerHTML = `
 
                 <h3>
-                    ${application.role}
+                    ${jobTitle}
                 </h3>
 
                 <p>
                     <strong>Company:</strong>
-                    ${application.company}
+                    ${companyName}
                 </p>
 
                 <p>
                     <strong>Location:</strong>
-                    ${application.location}
-                </p>
-
-                <p>
-                    <strong>Applicant:</strong>
-                    ${application.name}
+                    ${location}
                 </p>
 
                 <p>
                     <strong>Applied:</strong>
-                    ${application.date}
+                    ${appliedDate}
                 </p>
 
                 <span class="status">
                     ${application.status}
                 </span>
 
-                ${
-                    application.interviewCompleted
-                    ? `
-                        <p class="small">
-                            HR Interview Score:
-                            ${application.interviewScore}/100
-                        </p>
-                    `
-                    : `
-                        <p class="small">
-                            HR interview not completed yet.
-                        </p>
-                    `
-                }
-
             `;
 
             container.appendChild(card);
 
         });
+
+    } catch (error) {
+
+        console.error(
+            "Applications exception:",
+            error
+        );
+
+        container.innerHTML = `
+            <p class="small">
+                Could not connect to Supabase.
+            </p>
+        `;
+    }
 }
 
 
