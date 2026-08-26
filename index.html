@@ -697,6 +697,49 @@ button {
     </div>
 
 </section>
+</section>
+
+<!-- COMPANY DASHBOARD -->
+
+<section id="companyDashboard" class="section">
+
+    <div class="card">
+        <h2>Company Dashboard</h2>
+
+        <p id="companyWelcome">
+            Welcome, Company!
+        </p>
+
+        <p id="companyEmail" class="small"></p>
+
+        <p id="companyLocation" class="small"></p>
+    </div>
+
+    <div class="profile-grid">
+
+        <div class="stat">
+            <h3 id="companyJobCount">0</h3>
+            <p>Jobs Posted</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="companyApplicantCount">0</h3>
+            <p>Applicants</p>
+        </div>
+
+        <div class="stat">
+            <h3>Company</h3>
+            <p>Account Type</p>
+        </div>
+
+    </div>
+
+    <div class="card">
+        <h2>Company Jobs</h2>
+        <div id="companyJobsContainer"></div>
+    </div>
+
+</section>
 
 </div>
 
@@ -1410,7 +1453,51 @@ async function loadProfileFromSupabase() {
 
     }
 }
+async function loadCompanyFromSupabase() {
 
+    if (!currentUser) {
+        return null;
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("companies")
+            .select(`
+                id,
+                name,
+                description,
+                website,
+                location
+            `)
+            .eq("owner_id", currentUser.id)
+            .maybeSingle();
+
+        if (error) {
+
+            console.error(
+                "Company load error:",
+                error
+            );
+
+            return null;
+        }
+
+        return data || null;
+
+    } catch (error) {
+
+        console.error(
+            "Company load exception:",
+            error
+        );
+
+        return null;
+    }
+}
 
 /* =========================================================
    DISPLAY JOBS
@@ -2340,9 +2427,42 @@ async function initializeApp()  {
         await updateAuthUI();
 
         if (currentUser) {
-            await loadProfileFromSupabase();
-        }
 
+    await loadProfileFromSupabase();
+
+    const company =
+        await loadCompanyFromSupabase();
+
+window.currentCompany = company;
+
+if (company) {
+
+    document.getElementById(
+        "companyWelcome"
+    ).textContent =
+        `Welcome, ${company.name}!`;
+
+    document.getElementById(
+        "companyEmail"
+    ).textContent =
+        currentUser.email;
+
+    document.getElementById(
+        "companyLocation"
+    ).textContent =
+        company.location
+            ? `Location: ${company.location}`
+            : "";
+
+    showSection("companyDashboard");
+
+} else {
+
+    showSection("dashboard");
+
+          }
+
+        }
     } catch (error) {
 
         console.error(
