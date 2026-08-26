@@ -674,7 +674,7 @@ button {
         <div class="stat">
             <h3 id="applicationCount">0</h3>
             <p>Applications</p>
-        </div>
+        </div>s
 
         <div class="stat">
             <h3 id="interviewScore">-</h3>
@@ -2062,7 +2062,7 @@ function finishInterview() {
    DASHBOARD
 ========================================================= */
 
-function updateDashboard() {
+async function updateDashboard() {
 
     const welcome =
         document.getElementById(
@@ -2078,14 +2078,38 @@ function updateDashboard() {
                     : "Please log in to continue."
             );
 
-    document.getElementById(
-        "applicationCount"
-    ).textContent =
-        applications.filter(
-            app =>
-                !currentUser ||
-                app.userId === currentUser.id
-        ).length;
+    let applicationCount = 0;
+
+if (currentUser) {
+
+    const {
+        count,
+        error
+    } = await supabaseClient
+        .from("applications")
+        .select("id", {
+            count: "exact",
+            head: true
+        })
+        .eq("user_id", currentUser.id);
+
+    if (error) {
+
+        console.error(
+            "Application count error:",
+            error
+        );
+
+    } else {
+
+        applicationCount = count || 0;
+
+    }
+}
+
+document.getElementById(
+    "applicationCount"
+).textContent = applicationCount;
 
     document.getElementById(
         "interviewScore"
