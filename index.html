@@ -2140,15 +2140,12 @@ async function displayApplications() {
         document.getElementById("applicationsContainer");
 
     if (!currentUser) {
-        
-if (!data || data.length === 0) {
-    
         container.innerHTML = `
             <p class="small">
                 Please log in to view your applications.
             </p>
         `;
-
+        document.getElementById("applicationCount").textContent = 0;
         return;
     }
 
@@ -2182,7 +2179,6 @@ if (!data || data.length === 0) {
                 });
 
         if (error) {
-
             console.error(
                 "Applications load error:",
                 error
@@ -2193,12 +2189,14 @@ if (!data || data.length === 0) {
                     Could not load applications.
                 </p>
             `;
-           
-            
+
+            document.getElementById(
+                "applicationCount"
+            ).textContent = 0;
+
             return;
         }
-        
-        
+
         if (!data || data.length === 0) {
 
             container.innerHTML = `
@@ -2206,12 +2204,18 @@ if (!data || data.length === 0) {
                     You haven't submitted any applications yet.
                 </p>
             `;
-            document.getElementById("applicationCount").textContent = 0;
-            
+
+            document.getElementById(
+                "applicationCount"
+            ).textContent = 0;
+
             return;
         }
-        document.getElementById("applicationCount").textContent = data.length;
-        
+
+        document.getElementById(
+            "applicationCount"
+        ).textContent = data.length;
+
         container.innerHTML = "";
 
         data.forEach(application => {
@@ -2245,10 +2249,7 @@ if (!data || data.length === 0) {
                     : "Date unavailable";
 
             card.innerHTML = `
-
-                <h3>
-                    ${jobTitle}
-                </h3>
+                <h3>${jobTitle}</h3>
 
                 <p>
                     <strong>Company:</strong>
@@ -2268,11 +2269,9 @@ if (!data || data.length === 0) {
                 <span class="status">
                     ${application.status}
                 </span>
-
             `;
 
             container.appendChild(card);
-
         });
 
     } catch (error) {
@@ -2287,6 +2286,10 @@ if (!data || data.length === 0) {
                 Could not connect to Supabase.
             </p>
         `;
+
+        document.getElementById(
+            "applicationCount"
+        ).textContent = 0;
     }
 }
 
