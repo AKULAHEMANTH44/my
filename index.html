@@ -1498,7 +1498,121 @@ async function loadCompanyFromSupabase() {
         return null;
     }
 }
+async function loadCompanyJobs() {
 
+    const container =
+        document.getElementById("companyJobsContainer");
+
+    if (!window.currentCompany) {
+
+        container.innerHTML = `
+            <p class="small">
+                Company information not available.
+            </p>
+        `;
+
+        return;
+    }
+
+    container.innerHTML = `
+        <p class="small">
+            Loading company jobs...
+        </p>
+    `;
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("jobs")
+            .select(`
+                id,
+                title,
+                description,
+                location
+            `)
+            .eq(
+                "company_id",
+                window.currentCompany.id
+            )
+            .order("id", {
+                ascending: false
+            });
+
+        if (error) {
+
+            console.error(
+                "Company jobs load error:",
+                error
+            );
+
+            container.innerHTML = `
+                <p class="small">
+                    Could not load company jobs.
+                </p>
+            `;
+
+            return;
+        }
+
+        if (!data || data.length === 0) {
+
+            container.innerHTML = `
+                <p class="small">
+                    No jobs posted yet.
+                </p>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.forEach(job => {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "application-card";
+
+            card.innerHTML = `
+                <h3>${job.title}</h3>
+
+                <p>
+                    <strong>Location:</strong>
+                    ${job.location || "Not specified"}
+                </p>
+
+                <p>
+                    ${job.description || ""}
+                </p>
+            `;
+
+            container.appendChild(card);
+
+        });
+
+        document.getElementById(
+            "companyJobCount"
+        ).textContent = data.length;
+
+    } catch (error) {
+
+        console.error(
+            "Company jobs exception:",
+            error
+        );
+
+        container.innerHTML = `
+            <p class="small">
+                Could not connect to Supabase.
+            </p>
+        `;
+    }
+}
 /* =========================================================
    DISPLAY JOBS
 ========================================================= */
@@ -2455,7 +2569,7 @@ if (company) {
             : "";
 
     showSection("companyDashboard");
-
+    await loadCompanyJobs();
 } else {
 
     showSection("dashboard");
