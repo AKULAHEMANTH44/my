@@ -736,13 +736,113 @@ button {
 
     <div class="card">
         <h2>Company Jobs</h2>
+
+<button onclick="showSection('postJob')">
+    + Post New Job
+</button>
+
+<div id="companyJobsContainer"></div>
         <div id="companyJobsContainer"></div>
     </div>
 
 </section>
 
 </div>
+<!-- POST NEW JOB -->
 
+<section id="postJob" class="section">
+
+    <div class="card">
+
+        <h2>Post a New Job</h2>
+
+        <p class="small">
+            Create an internship or job opportunity for students.
+        </p>
+
+        <form id="postJobForm">
+
+            <label for="jobTitle">
+                Job Title
+            </label>
+
+            <input
+                type="text"
+                id="jobTitle"
+                placeholder="Example: Embedded Systems Intern"
+                required
+            >
+
+            <label for="jobDescription">
+                Job Description
+            </label>
+
+            <textarea
+                id="jobDescription"
+                rows="6"
+                placeholder="Describe the role, responsibilities and requirements..."
+                required
+            ></textarea>
+
+            <label for="jobLocation">
+                Location
+            </label>
+
+            <input
+                type="text"
+                id="jobLocation"
+                placeholder="Example: Bangalore"
+                required
+            >
+
+            <label for="jobSkills">
+                Skills Required
+            </label>
+
+            <input
+                type="text"
+                id="jobSkills"
+                placeholder="Example: C, Embedded Systems, ARM"
+                required
+            >
+
+            <label for="jobStipend">
+                Stipend
+            </label>
+
+            <input
+                type="text"
+                id="jobStipend"
+                placeholder="Example: ₹15,000/month"
+            >
+
+            <label for="jobDeadline">
+                Application Deadline
+            </label>
+
+            <input
+                type="date"
+                id="jobDeadline"
+            >
+
+            <button type="submit">
+                Publish Job
+            </button>
+
+            <button
+                type="button"
+                onclick="showSection('companyDashboard')"
+            >
+                Cancel
+            </button>
+
+        </form>
+
+        <p id="postJobMessage" class="small"></p>
+
+    </div>
+
+</section>
 <footer>
     <p>
         © 2026 ECE Career Connect |
