@@ -891,16 +891,16 @@ async function updateAuthUI() {
     try {
 
         const {
-            data: { user },
+            data: { session },
             error
-        } = await supabaseClient.auth.getUser();
+        } = await supabaseClient.auth.getsession();
 
         if (error) {
             console.error("Auth user error:", error);
             return;
         }
 
-        currentUser = user || null;
+        currentUser = session?.user || null;
 
         const logoutButton =
             document.getElementById("logoutButton");
