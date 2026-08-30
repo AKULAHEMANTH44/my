@@ -2499,42 +2499,36 @@ async function displayApplications() {
    AUTH STATE
 ========================================================= */
 
-supabaseClient.auth.onAuthStateChange(
-    (event, session) => {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
 
-        currentUser =
-            session?.user || null;
+    currentUser = session?.user || null;
 
-        if (!currentUser) {
-            window.currentCompany = null;
-            updateAuthUI();
+    if (!currentUser) {
+        window.currentCompany = null;
+        updateAuthUI();
+        return;
+    }
+
+    updateAuthUI();
+
+    setTimeout(async () => {
+
+        const company = await loadCompanyFromSupabase();
+
+        window.currentCompany = company;
+
+        if (company) {
+            showSection("companyDashboard");
+            await loadCompanyJobs();
+        } else {
+            await loadProfileFromSupabase();
+            showSection("dashboard");
             updateDashboard();
-            return;
         }
 
-        updateAuthUI();
+    }, 0);
 
-        setTimeout(async () => {
-
-            await loadProfileFromSupabase();
-
-            const company =
-                await loadCompanyFromSupabase();
-
-            window.currentCompany = company;
-
-            if (company) {
-                showSection("companyDashboard");
-                await loadCompanyJobs();
-            } else {
-                showSection("dashboard");
-            }
-
-            updateDashboard();
-
-        }, 0);
-    }
-);
+});
 
 
 /* =========================================================
