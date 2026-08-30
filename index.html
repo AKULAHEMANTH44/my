@@ -893,7 +893,7 @@ async function updateAuthUI() {
         const {
             data: { session },
             error
-        } = await supabaseClient.auth.getsession();
+        } = await supabaseClient.auth.getSession();
 
         if (error) {
             console.error("Auth user error:", error);
