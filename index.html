@@ -1713,6 +1713,134 @@ async function loadCompanyJobs() {
         `;
     }
 }
+    /* =========================================================
+   POST NEW JOB
+========================================================= */
+
+document.getElementById("postJobForm").addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        const message =
+            document.getElementById("postJobMessage");
+
+        if (!currentUser) {
+            message.textContent =
+                "Please log in first.";
+            return;
+        }
+
+        if (!window.currentCompany) {
+            message.textContent =
+                "Company account not detected.";
+            return;
+        }
+
+        const title =
+            document.getElementById("jobTitle")
+                .value.trim();
+
+        const description =
+            document.getElementById("jobDescription")
+                .value.trim();
+
+        const location =
+            document.getElementById("jobLocation")
+                .value.trim();
+
+        const jobType =
+            document.getElementById("jobType")
+                .value;
+
+        const eligibility =
+            document.getElementById("jobEligibility")
+                .value.trim();
+
+        const salary =
+            document.getElementById("jobSalary")
+                .value.trim();
+
+        const deadline =
+            document.getElementById("jobDeadline")
+                .value || null;
+
+        if (
+            !title ||
+            !description ||
+            !location ||
+            !jobType ||
+            !eligibility
+        ) {
+            message.textContent =
+                "Please complete all required fields.";
+            return;
+        }
+
+        message.textContent =
+            "Publishing job...";
+
+        try {
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("jobs")
+                .insert({
+                    company_id:
+                        window.currentCompany.id,
+                    title: title,
+                    description: description,
+                    location: location,
+                    job_type: jobType,
+                    eligibility: eligibility,
+                    salary: salary || null,
+                    application_deadline: deadline
+                })
+                .select()
+                .single();
+
+            if (error) {
+
+                console.error(
+                    "Job publish error:",
+                    error
+                );
+
+                message.textContent =
+                    "Could not publish job: " +
+                    error.message;
+
+                return;
+            }
+
+            message.textContent =
+                "Job published successfully!";
+
+            document.getElementById(
+                "postJobForm"
+            ).reset();
+
+            await loadCompanyJobs();
+
+            setTimeout(() => {
+                showSection("companyDashboard");
+            }, 1000);
+
+        } catch (error) {
+
+            console.error(
+                "Job publish exception:",
+                error
+            );
+
+            message.textContent =
+                "Could not connect to Supabase.";
+        }
+    }
+);
 /* =========================================================
    DISPLAY JOBS
 ========================================================= */
